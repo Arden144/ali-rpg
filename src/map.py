@@ -1,6 +1,7 @@
 from copy import deepcopy
 from functools import reduce
 
+from items import Heal
 from menu import columnify
 
 
@@ -8,6 +9,8 @@ class Tile:
     view: str
     hard = False
     win = False
+    pickup = None
+    alt = None
 
     def __str__(self):
         return self.view
@@ -45,6 +48,16 @@ class Goal(Tile):
  win """
 
 
+class Potion(Tile):
+    pickup = Heal("Potion", 20)
+    view = """\
+heal
+heal """
+
+    def __init__(self):
+        self.alt = Grass()
+
+
 class Map:
     def __init__(self, get_player_pos):
         self.get_player_pos = get_player_pos
@@ -52,7 +65,7 @@ class Map:
         self.map = [
             [Wall(), Wall(), Wall(), Wall()],
             [Grass(), Grass(), Grass(), Grass()],
-            [Grass(), Hut(), Grass(), Grass()],
+            [Potion(), Hut(), Grass(), Grass()],
             [Grass(), Grass(), Grass(), Grass()],
             [Wall(), Wall(), Wall(), Goal()],
         ]
@@ -72,6 +85,9 @@ class Map:
 
     def get_pos(self, x, y):
         return self.map[y][x]
+
+    def set_pos(self, x, y, tile):
+        self.map[y][x] = tile
 
     @property
     def width(self):

@@ -36,6 +36,7 @@ class Game:
 
     def moving(self):
         clear()
+        print(self.player, "\n")
         print(self.map)
         offset = move()
         pos = self.player.position
@@ -47,8 +48,15 @@ class Game:
             return
 
         tile = self.map.get_pos(*new_pos)
+
         if tile.hard:
             return
+
+        if tile.pickup:
+            self.player.inventory.append(tile.pickup)
+            if tile.alt:
+                self.map.set_pos(*new_pos, tile.alt)
+
         if tile.win:
             self.state = "win"
 
@@ -67,7 +75,7 @@ class Game:
             self.state = "quit"
 
     def reset(self):
-        self.player = Character(position=(0, 1))
+        self.player = Character("Player", position=(0, 1))
         self.map = Map(self.player.get_pos)
 
         self.state = "menu"

@@ -30,13 +30,13 @@ class _GetKeyPressWindows:
         if ch == b"\x00":
             ch = self.getch()
             if ch == b"H":
-                return "up"
+                return "w"
             elif ch == b"P":
-                return "down"
+                return "s"
             elif ch == b"K":
-                return "left"
+                return "a"
             elif ch == b"M":
-                return "right"
+                return "d"
 
         if ch == b"\r":
             return "enter"

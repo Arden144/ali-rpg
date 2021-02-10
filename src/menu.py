@@ -33,13 +33,13 @@ def choose(message, options, caps=False):
 
         print("\n".join(columnify(message, info)))
 
-        key = keypress("", ["up", "down", "enter"])
+        key = keypress("", ["w", "s", "enter"])
 
         if key == "enter":
             return options[selected]
-        if key == "up" and selected > 0:
+        if key == "w" and selected > 0:
             selected -= 1
-        if key == "down" and selected < len(options) - 1:
+        if key == "s" and selected < len(options) - 1:
             selected += 1
 
 

@@ -1,5 +1,9 @@
-title = "\n" "\n" "\n" "Ali is doodoo my guy\n" "\n" "\n" ""
+title = "RPG Game"
 
-help_message = "Placeholder"
+help_message = (
+    "Use the arrow keys or WASD\n"
+    "to move and navigate the menus.\n"
+    "Press enter to select."
+)
 
-win_message = "You Win!"
+win_message = "You Win!\nWould you like to play again?"
