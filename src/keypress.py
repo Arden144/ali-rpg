@@ -74,6 +74,19 @@ class _GetKeyPressUnix:
             raw_settings[1] = old_settings[1]
             self.tcsetattr(fd, self.TCSADRAIN, raw_settings)
             ch = self.stdin.read(1)
+            if ch == "\x1b":
+                ch = self.stdin.read(2)[1]
+                if ch == "A":
+                    ch = "w"
+                elif ch == "B":
+                    ch = "s"
+                elif ch == "D":
+                    ch = "a"
+                elif ch == "C":
+                    ch = "d"
+
+            if ch == "\r":
+                ch = "enter"
         finally:
             self.tcsetattr(fd, self.TCSADRAIN, old_settings)
         return ch
