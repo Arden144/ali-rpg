@@ -1,30 +1,76 @@
+from character import Character
 from map import Map
-from menu import choose
+from menu import choose, move
+from strings import help_message, title, win_message
+from util import clear
 
 
 class Game:
-    state = "menu"
-
     def __init__(self):
-        self.player_pos = (0, 0)
-        self.map = Map(self.get_player_pos)
+        self.reset()
         self.run_state = {
             "menu": self.menu,
+            "help": self.help,
             "moving": self.moving,
+            "win": self.win,
+            "reset": self.reset,
         }
 
-    def get_player_pos(self):
-        return self.player_pos
-
     def menu(self):
-        choice = choose(str(self.map), ["start", "help", "quit"], caps=True)
+        choice = choose(
+            title,
+            ["start", "help", "quit"],
+            caps=True,
+        )
+
         if choice == "start":
             self.state = "moving"
+        elif choice == "help":
+            self.state = "help"
         elif choice == "quit":
             self.state = "quit"
 
+    def help(self):
+        choose(help_message, ["Go Back"])
+        self.state = "menu"
+
     def moving(self):
-        pass
+        clear()
+        print(self.map)
+        offset = move()
+        pos = self.player.position
+        new_pos = (pos[0] + offset[0], pos[1] + offset[1])
+
+        if new_pos[0] < 0 or new_pos[0] >= self.map.width:
+            return
+        if new_pos[1] < 0 or new_pos[1] >= self.map.height:
+            return
+
+        tile = self.map.get_pos(*new_pos)
+        if tile.hard:
+            return
+        if tile.win:
+            self.state = "win"
+
+        self.player.position = new_pos
+
+    def win(self):
+        choice = choose(
+            win_message,
+            ["play again", "quit"],
+            caps=True,
+        )
+
+        if choice == "play again":
+            self.state = "reset"
+        elif choice == "quit":
+            self.state = "quit"
+
+    def reset(self):
+        self.player = Character(position=(0, 1))
+        self.map = Map(self.player.get_pos)
+
+        self.state = "menu"
 
     def play(self):
         while self.state != "quit":

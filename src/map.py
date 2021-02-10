@@ -4,48 +4,45 @@ from functools import reduce
 from menu import columnify
 
 
-def Grass():
-    return Segment(
-        [
-            "grass",
-            "grass",
-        ]
-    )
-
-
-def Hut():
-    return Segment(
-        [
-            " hut ",
-            " hut ",
-        ]
-    )
-
-
-def Wall():
-    return Segment(
-        [
-            "wall ",
-            "wall ",
-        ]
-    )
-
-
-def Player():
-    return Segment(
-        [
-            "playe",
-            "playe",
-        ]
-    )
-
-
-class Segment:
-    def __init__(self, view):
-        self.view = "\n".join(view)
+class Tile:
+    view: str
+    hard = False
+    win = False
 
     def __str__(self):
         return self.view
+
+
+class Player(Tile):
+    view = """\
+playe
+playe"""
+
+
+class Wall(Tile):
+    hard = True
+    view = """\
+wall
+wall """
+
+
+class Hut(Tile):
+    view = """\
+ hut
+ hut """
+
+
+class Grass(Tile):
+    view = """\
+grass
+grass"""
+
+
+class Goal(Tile):
+    win = True
+    view = """\
+ win
+ win """
 
 
 class Map:
@@ -57,7 +54,7 @@ class Map:
             [Grass(), Grass(), Grass(), Grass()],
             [Grass(), Hut(), Grass(), Grass()],
             [Grass(), Grass(), Grass(), Grass()],
-            [Wall(), Wall(), Wall(), Wall()],
+            [Wall(), Wall(), Wall(), Goal()],
         ]
 
     def __str__(self):
@@ -72,3 +69,14 @@ class Map:
                 [],
             )
         )
+
+    def get_pos(self, x, y):
+        return self.map[y][x]
+
+    @property
+    def width(self):
+        return len(self.map[0])
+
+    @property
+    def height(self):
+        return len(self.map)

@@ -41,3 +41,16 @@ def choose(message, options, caps=False):
             selected -= 1
         if key == "down" and selected < len(options) - 1:
             selected += 1
+
+
+direction = {
+    "w": (0, -1),
+    "a": (-1, 0),
+    "s": (0, 1),
+    "d": (1, 0),
+}
+
+
+def move():
+    key = keypress("", ["w", "a", "s", "d"])
+    return direction[key]
