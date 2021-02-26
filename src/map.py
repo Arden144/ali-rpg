@@ -6,16 +6,26 @@
 from copy import deepcopy
 from functools import reduce
 
+from colorama import Back
+
+from character import Enemy
 from items import Heal
 from menu import columnify
 
 
 class Tile:
+    # The string for displaying the tile
     view: str
+    # True if a player can't cross the tile
     hard = False
+    # True if going on the tile should trigger a win
     win = False
+    # The item to pick up when going on the tile
     pickup = None
+    # The tile to replace with after going over the tile
     alt = None
+    # The enemy to fight when going on the tile
+    enemy = None
 
     def __str__(self):
         """Get a string representation of the tile
@@ -27,44 +37,55 @@ class Tile:
 
 
 class Player(Tile):
-    view = """\
-playe
-playe"""
+    view = f"""\
+{Back.YELLOW}
+{Back.YELLOW}     """
 
 
 class Wall(Tile):
     hard = True
-    view = """\
-wall
-wall """
+    view = f"""\
+{Back.WHITE}
+{Back.WHITE}     """
 
 
-class Hut(Tile):
-    view = """\
- hut
- hut """
+class Rock(Tile):
+    hard = True
+    view = f"""\
+{Back.BLACK}
+{Back.BLACK}     """
 
 
 class Grass(Tile):
-    view = """\
-grass
-grass"""
+    view = f"""\
+{Back.GREEN}
+{Back.GREEN}     """
 
 
 class Goal(Tile):
     win = True
-    view = """\
- win
- win """
+    view = f"""\
+{Back.CYAN}
+{Back.CYAN}     """
 
 
 class Potion(Tile):
     pickup = Heal("Potion", 20)
-    view = """\
-heal
-heal """
+    view = f"""\
+{Back.GREEN}  {Back.MAGENTA} {Back.GREEN}
+{Back.GREEN} {Back.MAGENTA}   {Back.GREEN} """
 
     def __init__(self):
+        self.alt = Grass()
+
+
+class Zombie(Tile):
+    view = f"""\
+{Back.GREEN}  {Back.RED} {Back.GREEN}
+{Back.GREEN}  {Back.RED} {Back.GREEN}  """
+
+    def __init__(self):
+        self.enemy = Enemy("Zombie")
         self.alt = Grass()
 
 
@@ -73,16 +94,17 @@ class Map:
         """Create an instance of a Map
 
         Args:
-            get_player_pos (function): Function to get the latest player pos
+            get_player_pos (function): Callback to get the latest player pos
         """
         self.get_player_pos = get_player_pos
 
         self.map = [
-            [Wall(), Wall(), Wall(), Wall()],
-            [Grass(), Grass(), Grass(), Grass()],
-            [Potion(), Hut(), Grass(), Grass()],
-            [Grass(), Grass(), Grass(), Grass()],
-            [Wall(), Wall(), Wall(), Goal()],
+            [Wall(), Wall(), Wall(), Wall(), Wall()],
+            [Grass(), Grass(), Grass(), Grass(), Grass()],
+            [Potion(), Rock(), Grass(), Zombie(), Grass()],
+            [Grass(), Grass(), Grass(), Grass(), Grass()],
+            [Grass(), Grass(), Grass(), Grass(), Grass()],
+            [Wall(), Wall(), Wall(), Goal(), Wall()],
         ]
 
     def __str__(self):
@@ -97,10 +119,11 @@ class Map:
 
         return "\n".join(
             reduce(
-                lambda p, v: p + [*columnify(*map(str, v), sep=" ")],
+                lambda p, v: p + [*columnify(*map(str, v), sep="")],
                 map_copy,
                 [],
             )
+            + [Back.RESET]
         )
 
     def get_pos(self, x, y):
