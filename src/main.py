@@ -22,6 +22,8 @@ from util import clear
 
 
 class Game:
+    """Game logic and state"""
+
     def __init__(self):
         """Create an instance of the game.
 

@@ -5,6 +5,8 @@
 
 
 class Item:
+    """Represnts an item to be picked up"""
+
     def __init__(self, name):
         """Create an instance of an Item.
 
@@ -23,6 +25,8 @@ class Item:
 
 
 class Heal(Item):
+    """Represents an item to be picked up that can provide healing"""
+
     def __init__(self, name, healing):
         """Create an instance of a Heal Item.
 

@@ -7,6 +7,8 @@ from random import random
 
 
 class Character:
+    """Represents a player in the game"""
+
     kills = 0
 
     def __init__(
@@ -96,6 +98,8 @@ class Character:
 
 
 class Enemy:
+    """Represents an enemy in the game"""
+
     def __init__(self, name, damage=10, health=30):
         """Create an instance of an enemy
 

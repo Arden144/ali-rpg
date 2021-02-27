@@ -14,6 +14,8 @@ from menu import columnify
 
 
 class Tile:
+    """Represents a tile on the map"""
+
     # The string for displaying the tile
     view: str
     # True if a player can't cross the tile
@@ -90,6 +92,8 @@ class Zombie(Tile):
 
 
 class Map:
+    """Represents and stores the game map"""
+
     def __init__(self, get_player_pos):
         """Create an instance of a Map
 
