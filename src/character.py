@@ -7,12 +7,15 @@ from random import random
 
 
 class Character:
+    kills = 0
+
     def __init__(
         self,
         name,
         position=(0, 0),
         health=100,
         damage=15,
+        kills_to_win=3,
         inventory=None,
     ):
         """Create an instance of a Character.
@@ -22,6 +25,7 @@ class Character:
             position (tuple, optional): x y coordinates. Defaults to (0, 0).
             health (int, optional): Character health. Defaults to 100.
             damage (int, optional): Character attack damage. Defaults to 15.
+            kills_to_win (int, optional): Kilss required to win. Defaults to 3.
             inventory (list[Item], optional): Character inventory. Default [].
         """
         # Workaround for mutable default values
@@ -32,6 +36,7 @@ class Character:
         self.name = name
         self.health = health
         self.damage = damage
+        self.kills_to_win = kills_to_win
         self.position = position
 
     def get_pos(self):
@@ -56,7 +61,8 @@ class Character:
         return f"""\
 {self.name}:
 - {self.health} Health Remaining
-- Inventory: {inventory}"""
+- Inventory: {inventory}
+- {self.kills} / {self.kills_to_win} Kills to Win"""
 
     def light_attack(self):
         """Get the damage of a light attack
@@ -79,6 +85,14 @@ class Character:
 
         # Deal 2x damage
         return self.damage * 2
+
+    def has_won(self):
+        """Return true if the character has enough kills to win
+
+        Returns:
+            boolean: True if the character won, false otherwise
+        """
+        return self.kills >= self.kills_to_win
 
 
 class Enemy:

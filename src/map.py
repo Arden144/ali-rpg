@@ -100,9 +100,9 @@ class Map:
 
         self.map = [
             [Wall(), Wall(), Wall(), Wall(), Wall()],
-            [Grass(), Grass(), Grass(), Grass(), Grass()],
+            [Grass(), Grass(), Grass(), Grass(), Zombie()],
             [Potion(), Rock(), Grass(), Zombie(), Grass()],
-            [Grass(), Grass(), Grass(), Grass(), Grass()],
+            [Grass(), Grass(), Grass(), Grass(), Zombie()],
             [Grass(), Grass(), Grass(), Grass(), Grass()],
             [Wall(), Wall(), Wall(), Goal(), Wall()],
         ]
@@ -126,26 +126,26 @@ class Map:
             + [Back.RESET]
         )
 
-    def get_pos(self, x, y):
+    def get_pos(self, pos):
         """Get the tile at the given coordinates
 
         Args:
-            x (int): x-coordinate
-            y (int): y-coordinate
+            pos (list[int]): x, y coordinates
 
         Returns:
             Tile: Data at the given coordinates
         """
+        x, y = pos
         return self.map[y][x]
 
-    def set_pos(self, x, y, tile):
+    def set_pos(self, pos, tile):
         """Set the tite at the given coordinates
 
         Args:
-            x (int): x-coordinate
-            y (int): y-coordinate
+            pos (list[int]): x, y coordinates
             tile (Tile): Data to be set at the given coordinates
         """
+        x, y = pos
         self.map[y][x] = tile
 
     @property

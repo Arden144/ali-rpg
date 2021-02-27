@@ -103,6 +103,9 @@ def keypress(message, filter=None):
     print(message, end="", flush=True)
     while True:
         key = get_keypress()
+        if key == 'q':
+            exit()
+
         if filter and key not in filter:
             continue
         return key

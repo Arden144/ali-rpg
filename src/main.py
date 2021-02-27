@@ -94,7 +94,7 @@ class Game:
             return
 
         # Get information about the tile the player is now on
-        tile = self.map.get_pos(*new_pos)
+        tile = self.map.get_pos(new_pos)
 
         # Prevent player entering an impassable tile
         if tile.hard:
@@ -106,7 +106,7 @@ class Game:
 
             # Replace the picked up item with its after-pickup tile
             if tile.alt:
-                self.map.set_pos(*new_pos, tile.alt)
+                self.map.set_pos(new_pos, tile.alt)
 
         # Fight an enemy from the tile
         if tile.enemy:
@@ -160,12 +160,15 @@ class Game:
             print(kill_message.format(self.target.name))
             keypress("Press any key to continue")
 
+            # Add a kill to the player
+            self.player.kills += 1
+
             # Reset target to none
             self.target = None
 
             # Replace the enemy tile with its after-pickup tile
             if self.target_alt:
-                self.map.set_pos(*self.player.position, self.target_alt)
+                self.map.set_pos(self.player.position, self.target_alt)
 
             self.state = "moving"
 
@@ -191,6 +194,7 @@ class Game:
         """Reset the game state for replayability."""
         # Creates a new player instance at the default position
         self.player = Character("Player", position=(0, 1))
+        self.player_won = False
 
         # Creates the map instance and provides a function to get the player's
         # position so the map stays updated
@@ -206,6 +210,12 @@ class Game:
         """Start the main gameplay loop"""
         # Call respective gameplay methods based on the game state
         while self.state != "quit":
+
+            # Check if the player met its win condition
+            if not self.player_won and self.player.has_won():
+                self.player_won = True
+                self.state = "win"
+
             self.run_state[self.state]()
 
 
