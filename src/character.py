@@ -100,7 +100,7 @@ class Character:
 class Enemy:
     """Represents an enemy in the game"""
 
-    def __init__(self, name, damage=10, health=30):
+    def __init__(self, name, damage=20, health=40):
         """Create an instance of an enemy
 
         Args:

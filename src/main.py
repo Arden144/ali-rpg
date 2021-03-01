@@ -6,6 +6,7 @@
 from functools import partial
 
 from character import Character
+from items import Heal
 from keypress import keypress
 from map import Map
 from menu import choose, move
@@ -120,7 +121,7 @@ class Game:
                 self.target_alt = tile.alt
 
         # Set the state to win if the tile is a win tile
-        if tile.win:
+        if tile.win and self.player.has_won():
             self.state = "win"
 
         # Save the new position to the game state
@@ -150,35 +151,53 @@ class Game:
         # Deduct enemy attack damage from player health
         self.player.health -= self.target.attack()
 
-        # If player is killed display information and loss message
-        if self.player.health <= 0:
-            print(death_message.format(self.target.name))
+        if self.player.health <= 0 or self.target.health <= 0:
+
+            target_name = self.target.name
+
+            # If enemy is killed display information and go back to map
+            if self.target.health <= 0:
+                print(kill_message.format(target_name))
+
+                # Add a kill to the player
+                self.player.kills += 1
+
+                # Reset target to none
+                self.target = None
+
+                # Replace the enemy tile with its after-pickup tile
+                if self.target_alt:
+                    self.map.set_pos(self.player.position, self.target_alt)
+
+                self.state = "moving"
+
+            # If player is killed display information and loss message
+            if self.player.health <= 0:
+                print(death_message.format(target_name))
+
+                self.state = "lose"
+
             keypress("Press any key to continue")
-
-            self.state = "lose"
-
-        # If enemy is killed display information and go back to map
-        if self.target.health <= 0:
-            print(kill_message.format(self.target.name))
-            keypress("Press any key to continue")
-
-            # Add a kill to the player
-            self.player.kills += 1
-
-            # Reset target to none
-            self.target = None
-
-            # Replace the enemy tile with its after-pickup tile
-            if self.target_alt:
-                self.map.set_pos(self.player.position, self.target_alt)
-
-            self.state = "moving"
 
     def end(self, win):
         """Display a win message.
 
         Presents options for the player to start again or quit.
         """
+
+        if not win:
+            for i, item in enumerate(self.player.inventory):
+                if isinstance(item, Heal):
+                    del self.player.inventory[i]
+                    print("Your health potion revived you")
+                    keypress("Press any key to continue")
+                    if self.target:
+                        self.state = "fighting"
+                    else:
+                        self.state = "moving"
+                    self.player.health += 50
+                    return
+
         # Wait for the player to choose an option
         choice = choose(
             win_message if win else lose_message,
@@ -212,12 +231,6 @@ class Game:
         """Start the main gameplay loop"""
         # Call respective gameplay methods based on the game state
         while self.state != "quit":
-
-            # Check if the player met its win condition
-            if not self.player_won and self.player.has_won():
-                self.player_won = True
-                self.state = "win"
-
             self.run_state[self.state]()
 
 
